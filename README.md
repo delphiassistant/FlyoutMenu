@@ -8,7 +8,6 @@ Bootstrap 5 + jQuery compatible multi-level flyout menu for widget integration w
 - `js/widget-flyout.js` - Flyout menu functionality with theme utilities
 - `index.html` - Main demo page with live examples and theme toggle
 - `example-dark-mode.html` - Dedicated dark mode demonstration
-- `test-dark-mode.html` - Automated test suite
 - `README.md` - This file (complete documentation)
 
 ## ✨ Features
@@ -881,15 +880,6 @@ Open **`example-dark-mode.html`** to see:
 - Multiple menus in dark mode
 - localStorage persistence
 
-### Test Suite
-Open **`test-dark-mode.html`** to run:
-- 12 automated tests
-- Theme functionality verification
-- localStorage testing
-- CSS variable validation
-
----
-
 ## 📊 Performance
 
 - **CSS file size:** ~3 KB (minified)
@@ -932,10 +922,9 @@ Provided as-is for use in your projects.
 
 ## 🆘 Support
 
-### Demo & Test Files
+### Demo Files
 - `index.html` - Main demonstration
 - `example-dark-mode.html` - Dark mode examples
-- `test-dark-mode.html` - Automated tests
 
 ### Quick Test
 Paste this in browser console to test:
