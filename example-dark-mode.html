@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Example - Flyout Menu</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Widget Flyout CSS -->
+    <link href="css/widget-flyout.css" rel="stylesheet">
+    
+    <style>
+        /* Prevent flash of unstyled content */
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 2rem;
+        }
+        
+        [data-bs-theme="dark"] body {
+            background-color: #0d1117;
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Card styling with dark mode support */
+        .card {
+            background-color: var(--bs-body-bg);
+            border-color: var(--bs-border-color);
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .card {
+            background-color: #1c2128;
+        }
+        
+        /* Theme toggle button */
+        .theme-controls {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .theme-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: transform 0.2s ease;
+            border: 2px solid;
+        }
+        
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-btn.active {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+        }
+        
+        /* Menu widget styling */
+        .menu-widget {
+            background: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .menu-widget {
+            background: #1c2128;
+        }
+        
+        .menu-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--bs-border-color);
+            background-color: var(--bs-primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .menu-body {
+            padding: 1rem;
+        }
+        
+        /* Info section */
+        .info-section {
+            margin-bottom: 2rem;
+        }
+        
+        .info-section h1 {
+            margin-bottom: 1rem;
+        }
+        
+        .info-section .alert {
+            margin-bottom: 1rem;
+        }
+        
+        /* Code block styling */
+        pre {
+            background-color: var(--bs-secondary-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        [data-bs-theme="dark"] pre {
+            background-color: #2d333b;
+        }
+        
+        code {
+            color: var(--bs-code-color);
+        }
+        
+        [data-bs-theme="dark"] code {
+            color: #f47cb6;
+        }
+        
+        .badge {
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Controls -->
+    <div class="theme-controls">
+        <button type="button" class="btn btn-outline-primary theme-btn" id="lightBtn" title="Light Mode">
+            <i class="bi bi-sun-fill"></i>
+        </button>
+        <button type="button" class="btn btn-outline-primary theme-btn" id="darkBtn" title="Dark Mode">
+            <i class="bi bi-moon-stars-fill"></i>
+        </button>
+        <button type="button" class="btn btn-outline-primary theme-btn" id="autoBtn" title="Auto (System)">
+            <i class="bi bi-circle-half"></i>
+        </button>
+    </div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <div class="info-section">
+            <h1>
+                <i class="bi bi-moon-stars text-primary"></i>
+                Dark Mode Example
+            </h1>
+            <p class="lead">
+                This example demonstrates the dark mode capabilities of the Flyout Menu library.
+                Use the theme buttons in the top-right corner to switch between light, dark, and auto modes.
+            </p>
+            
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Current Theme:</strong> <span id="currentTheme" class="badge bg-primary">Loading...</span>
+                <br>
+                <small>Your preference is automatically saved and will be restored on next visit.</small>
+            </div>
+        </div>
+        
+        <!-- Demo Grid -->
+        <div class="row g-4">
+            <!-- Menu Column 1 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="menu-widget">
+                    <div class="menu-header">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>
+                        Main Menu (LTR)
+                    </div>
+                    <div class="menu-body" id="menu-ltr"></div>
+                </div>
+            </div>
+            
+            <!-- Menu Column 2 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="menu-widget" dir="rtl">
+                    <div class="menu-header">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>
+                        فهرست اصلی (RTL)
+                    </div>
+                    <div class="menu-body" id="menu-rtl"></div>
+                </div>
+            </div>
+            
+            <!-- API Info Column -->
+            <div class="col-lg-4 col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-code-square me-2"></i>
+                        Theme API
+                    </div>
+                    <div class="card-body">
+                        <h6>Quick Commands</h6>
+                        <pre><code>// Initialize
+FlyoutTheme.init();
+
+// Set theme
+FlyoutTheme.setTheme('dark');
+FlyoutTheme.setTheme('light');
+FlyoutTheme.setTheme('auto');
+
+// Toggle
+FlyoutTheme.toggle();
+
+// Get current
+FlyoutTheme.getTheme();
+
+// Watch system
+FlyoutTheme.watchSystemTheme();</code></pre>
+                        
+                        <h6 class="mt-3">Features</h6>
+                        <ul class="small">
+                            <li>localStorage persistence</li>
+                            <li>System preference detection</li>
+                            <li>Bootstrap 5 integration</li>
+                            <li>Smooth transitions</li>
+                            <li>Legacy support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CSS Variables Info -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-palette me-2"></i>
+                        Customizable CSS Variables
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Light Mode Variables</h6>
+                                <pre><code>:root {
+  --flyout-bg: #ffffff;
+  --flyout-border-color: #dee2e6;
+  --flyout-text-color: #212529;
+  --flyout-hover-bg: #f8f9fa;
+  --flyout-hover-text: #212529;
+  --flyout-active-bg: #e9ecef;
+  --flyout-focus-outline: #0d6efd;
+  --flyout-shadow: rgba(0, 0, 0, 0.15);
+}</code></pre>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Dark Mode Variables</h6>
+                                <pre><code>[data-bs-theme="dark"] {
+  --flyout-bg: #212529;
+  --flyout-border-color: #495057;
+  --flyout-text-color: #dee2e6;
+  --flyout-hover-bg: #343a40;
+  --flyout-hover-text: #ffffff;
+  --flyout-active-bg: #495057;
+  --flyout-focus-outline: #0d6efd;
+  --flyout-shadow: rgba(0, 0, 0, 0.5);
+}</code></pre>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning mt-3 mb-0">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Tip:</strong> Override these variables in your custom CSS to create your own color schemes!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery 3.7+ -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Widget Flyout JS -->
+    <script src="js/widget-flyout.js"></script>
+    
+    <script>
+        // Menu data for LTR
+        const menuDataLTR = [
+            {
+                label: 'Dashboard',
+                icon: 'bi bi-speedometer2',
+                url: '#dashboard',
+                children: [
+                    { label: 'Overview', icon: 'bi bi-bar-chart', url: '#overview' },
+                    { label: 'Analytics', icon: 'bi bi-graph-up', url: '#analytics' },
+                    {
+                        label: 'Reports',
+                        icon: 'bi bi-file-earmark-text',
+                        url: '#',
+                        children: [
+                            { label: 'Monthly', icon: 'bi bi-calendar-month', url: '#monthly' },
+                            { label: 'Quarterly', icon: 'bi bi-calendar-range', url: '#quarterly' },
+                            { label: 'Annual', icon: 'bi bi-calendar-check', url: '#annual' }
+                        ]
+                    }
+                ]
+            },
+            {
+                label: 'Settings',
+                icon: 'bi bi-gear',
+                url: '#',
+                children: [
+                    { label: 'Profile', icon: 'bi bi-person', url: '#profile' },
+                    { label: 'Security', icon: 'bi bi-shield-lock', url: '#security' },
+                    {
+                        label: 'Preferences',
+                        icon: 'bi bi-sliders',
+                        url: '#',
+                        children: [
+                            { label: 'Notifications', icon: 'bi bi-bell', url: '#notifications' },
+                            { label: 'Privacy', icon: 'bi bi-eye-slash', url: '#privacy' },
+                            { label: 'Display', icon: 'bi bi-display', url: '#display' }
+                        ]
+                    }
+                ]
+            },
+            {
+                label: 'Help',
+                icon: 'bi bi-question-circle',
+                url: '#',
+                children: [
+                    { label: 'Documentation', icon: 'bi bi-book', url: '#docs' },
+                    { label: 'Support', icon: 'bi bi-life-preserver', url: '#support' },
+                    { label: 'About', icon: 'bi bi-info-circle', url: '#about' }
+                ]
+            }
+        ];
+        
+        // Menu data for RTL (Persian)
+        const menuDataRTL = [
+            {
+                label: 'داشبورد',
+                icon: 'bi bi-speedometer2',
+                url: '#dashboard',
+                children: [
+                    { label: 'نمای کلی', icon: 'bi bi-bar-chart', url: '#overview' },
+                    { label: 'تحلیل‌ها', icon: 'bi bi-graph-up', url: '#analytics' },
+                    {
+                        label: 'گزارش‌ها',
+                        icon: 'bi bi-file-earmark-text',
+                        url: '#',
+                        children: [
+                            { label: 'ماهانه', icon: 'bi bi-calendar-month', url: '#monthly' },
+                            { label: 'سه‌ماهه', icon: 'bi bi-calendar-range', url: '#quarterly' },
+                            { label: 'سالانه', icon: 'bi bi-calendar-check', url: '#annual' }
+                        ]
+                    }
+                ]
+            },
+            {
+                label: 'تنظیمات',
+                icon: 'bi bi-gear',
+                url: '#',
+                children: [
+                    { label: 'پروفایل', icon: 'bi bi-person', url: '#profile' },
+                    { label: 'امنیت', icon: 'bi bi-shield-lock', url: '#security' },
+                    {
+                        label: 'ترجیحات',
+                        icon: 'bi bi-sliders',
+                        url: '#',
+                        children: [
+                            { label: 'اعلان‌ها', icon: 'bi bi-bell', url: '#notifications' },
+                            { label: 'حریم خصوصی', icon: 'bi bi-eye-slash', url: '#privacy' },
+                            { label: 'نمایش', icon: 'bi bi-display', url: '#display' }
+                        ]
+                    }
+                ]
+            },
+            {
+                label: 'راهنما',
+                icon: 'bi bi-question-circle',
+                url: '#',
+                children: [
+                    { label: 'مستندات', icon: 'bi bi-book', url: '#docs' },
+                    { label: 'پشتیبانی', icon: 'bi bi-life-preserver', url: '#support' },
+                    { label: 'درباره', icon: 'bi bi-info-circle', url: '#about' }
+                ]
+            }
+        ];
+        
+        // Initialize everything when DOM is ready
+        $(document).ready(function() {
+            // Initialize theme
+            FlyoutTheme.init();
+            FlyoutTheme.watchSystemTheme();
+            
+            // Update UI based on current theme
+            function updateThemeUI() {
+                const theme = FlyoutTheme.getTheme();
+                $('#currentTheme').text(theme.charAt(0).toUpperCase() + theme.slice(1));
+                
+                // Update active button
+                $('.theme-btn').removeClass('active');
+                if (theme === 'dark') {
+                    $('#darkBtn').addClass('active');
+                } else {
+                    $('#lightBtn').addClass('active');
+                }
+            }
+            
+            // Theme button handlers
+            $('#lightBtn').on('click', function() {
+                FlyoutTheme.setTheme('light');
+                updateThemeUI();
+            });
+            
+            $('#darkBtn').on('click', function() {
+                FlyoutTheme.setTheme('dark');
+                updateThemeUI();
+            });
+            
+            $('#autoBtn').on('click', function() {
+                FlyoutTheme.setTheme('auto');
+                updateThemeUI();
+            });
+            
+            // Initial UI update
+            updateThemeUI();
+            
+            // Initialize menus
+            renderFlyoutFromJson('#menu-ltr', menuDataLTR);
+            renderFlyoutFromJson('#menu-rtl', menuDataRTL);
+        });
+    </script>
+</body>
+</html>
+
